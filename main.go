@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/manifoldco/promptui"
 )
 
 type Color string
@@ -17,40 +19,57 @@ const (
 	ColorReset        = "\u001b[0m"
 )
 
+var (
+	err    error
+	result string
+)
+
 func colorize(color Color, message string) {
 	fmt.Println(string(color), message, string(ColorReset))
 }
 
 func main() {
-	colorize(ColorYellow, "Welcome to Secret Vault")
+	colorize(ColorYellow, "Welcome to Secret Vault\n")
 
 	loginCmd := flag.NewFlagSet("login", flag.ExitOnError)
 	signupCmd := flag.NewFlagSet("signup", flag.ExitOnError)
 
-	if len(os.Args) < 2 {
-		colorize(ColorRed, "Enter a valid command 'login' or 'signup")
-		os.Exit(1)
+	prompt := promptui.Select{
+		Label: "Select an Option",
+		Items: []string{"login", "signup"},
 	}
 
-	switch os.Args[1] {
+	if len(os.Args) < 2 {
+		_, result, err = prompt.Run()
+		if err != nil {
+			fmt.Printf("Prompt failed %v\n", err)
+			return
+		}
+
+	} else {
+		result = os.Args[1]
+	}
+
+	switch result {
 	case "login":
-		fmt.Printf("login")
 		HandleLogin(loginCmd)
 	case "signup":
-		fmt.Printf("signup")
 		HandleLogin(signupCmd)
 
 	default: // if we don't understand the input
+		colorize(ColorRed, "Enter a valid command")
 	}
 
 }
 
 func HandleLogin(loginCmd *flag.FlagSet) {
-	loginCmd.Parse(os.Args[2:])
+	fmt.Printf("login")
+	// loginCmd.Parse(os.Args[2:])
 
 }
 
 func HandleSignup(signupCmd *flag.FlagSet) {
-	signupCmd.Parse(os.Args[2:])
+	fmt.Printf("signup")
+	// signupCmd.Parse(os.Args[2:])
 
 }
