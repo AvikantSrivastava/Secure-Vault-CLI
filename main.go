@@ -44,7 +44,7 @@ func main() {
 		_, result, err = prompt.Run()
 		if err != nil {
 			fmt.Printf("Prompt failed %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 	} else {
@@ -62,14 +62,36 @@ func main() {
 
 }
 
+func getUserDetails() (string, string) {
+	username_prompt := promptui.Prompt{
+		Label: "Username",
+	}
+	password_prompt := promptui.Prompt{
+		Label: "Password",
+		Mask:  '*',
+	}
+	username, err := username_prompt.Run()
+	password, err := password_prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+
+	}
+
+	fmt.Printf("Your Username is %q\n", username)
+	fmt.Printf("Your Username is %q\n", password)
+
+	return username, password
+}
+
 func HandleLogin(loginCmd *flag.FlagSet) {
 	fmt.Printf("login")
-	// loginCmd.Parse(os.Args[2:])
+	getUserDetails()
 
 }
 
 func HandleSignup(signupCmd *flag.FlagSet) {
 	fmt.Printf("signup")
-	// signupCmd.Parse(os.Args[2:])
+	getUserDetails()
 
 }
