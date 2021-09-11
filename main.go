@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"strings"
 
@@ -70,28 +74,62 @@ func getUserDetails() (string, string) {
 		Label: "Password",
 		Mask:  '*',
 	}
-	username, err := username_prompt.Run()
-	password, err := password_prompt.Run()
+	username, err1 := username_prompt.Run()
+	password, err2 := password_prompt.Run()
 
-	if err != nil {
+	if err1 != nil || err2 != nil {
 		fmt.Printf("Prompt failed %v\n", err)
-
 	}
-
-	fmt.Printf("Your Username is %q\n", username)
-	fmt.Printf("Your Username is %q\n", password)
 
 	return username, password
 }
 
 func HandleLogin(loginCmd *flag.FlagSet) {
-	fmt.Printf("login")
-	getUserDetails()
+	username, password := getUserDetails()
+	request_map := map[string]string{
+		"username": username,
+		"password": password,
+	}
+
+	request_json, err := json.Marshal(request_map)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	resp, err := http.Post("http://127.0.0.1:8000"+"/login", "application/json",
+		bytes.NewBuffer(request_json))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var res map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+	fmt.Println(res["status"])
 
 }
 
 func HandleSignup(signupCmd *flag.FlagSet) {
-	fmt.Printf("signup")
-	getUserDetails()
+	username, password := getUserDetails()
+	request_map := map[string]string{
+		"username": username,
+		"password": password,
+	}
+
+	request_json, err := json.Marshal(request_map)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	resp, err := http.Post("http://127.0.0.1:8000"+"/signup", "application/json",
+		bytes.NewBuffer(request_json))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var res map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+	fmt.Println(res["status"])
 
 }
