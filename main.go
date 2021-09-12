@@ -96,7 +96,7 @@ func HandleLogin(loginCmd *flag.FlagSet) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	resp, err := http.Post("http://127.0.0.1:8000"+"/login", "application/json",
+	resp, err := http.Post("https://secret-vault.herokuapp.com"+"/login", "application/json",
 		bytes.NewBuffer(request_json))
 
 	if err != nil {
@@ -121,7 +121,7 @@ func HandleSignup(signupCmd *flag.FlagSet) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	resp, err := http.Post("http://127.0.0.1:8000"+"/signup", "application/json",
+	resp, err := http.Post("https://secret-vault.herokuapp.com"+"/signup", "application/json",
 		bytes.NewBuffer(request_json))
 
 	if err != nil {
